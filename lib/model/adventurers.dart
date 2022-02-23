@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
+
 import './adventurer.dart';
 import './skills.dart';
 
-class Adventurers {
+class Adventurers with ChangeNotifier {
   final adventurers = [
     Adventurer(
       id: '001',
@@ -12,7 +14,8 @@ class Adventurers {
       height: 180,
       weight: 79,
       skills: [
-        Skills().skills.firstWhere((skill) => skill.name == 'Push Up'),
+        'Push Up',
+        'Pull Up',
       ],
     ),
   ];

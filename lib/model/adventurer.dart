@@ -1,7 +1,11 @@
+import 'dart:math';
+
+import 'package:flutter/cupertino.dart';
+
 import 'ability.dart';
 import './skill.dart';
 
-class Adventurer {
+class Adventurer with ChangeNotifier {
   String id;
   String firstName;
   String lastName;
@@ -11,7 +15,7 @@ class Adventurer {
   double height;
   double weight;
   Map<Ability, int> abilities = {for (var key in Ability.values) key: 0};
-  List<Skill> skills;
+  List<String> skills;
 
   Adventurer({
     required this.id,
@@ -23,4 +27,9 @@ class Adventurer {
     this.weight = 0,
     this.skills = const [],
   });
+
+  int get personaLevel {
+    int levels = abilities.values.reduce((a, b) => a + b);
+    return levels ~/ abilities.length;
+  }
 }
