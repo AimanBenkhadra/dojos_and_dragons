@@ -1,12 +1,14 @@
+import 'package:flutter/cupertino.dart';
+
 import './ability.dart';
 import './gender.dart';
 import './measurement.dart';
 import './skill.dart';
 
-class Skills {
+class Skills with ChangeNotifier {
   final _skills = [
     Skill(
-      name: 'Push Up',
+      name: SkillName.pushUp,
       associatedAbility: Ability.push,
       measurement: Measurement.rep,
       weightChart: {
@@ -53,7 +55,7 @@ class Skills {
       },
     ),
     Skill(
-      name: 'Pull Up',
+      name: SkillName.pullUp,
       associatedAbility: Ability.pull,
       measurement: Measurement.rep,
       weightChart: {
@@ -102,4 +104,102 @@ class Skills {
   ];
 
   List<Skill> get skills => [..._skills];
+
+  int levelOfSkillWithWeight(
+    SkillName skillName,
+    Gender gender,
+    int weight,
+    int result,
+  ) {
+    var _isBelowRange = false;
+    var _isAboveRange = false;
+
+    final skill = _skills.firstWhere((s) => s.name == skillName);
+    final wChart = skill.weightChart;
+    final gChart = wChart[gender];
+    final weights = gChart!.keys.toList()..sort();
+    var minWeight;
+    var maxWeight;
+    if (weights[0] > weight) {
+      maxWeight = weights[0];
+      _isBelowRange = true;
+    } else if (weights.last < weight) {
+      minWeight = weights.last;
+      _isAboveRange = true;
+    } else {
+      for (int weightI = 0; weightI < weights.length; weightI++) {
+        if (weight >= weights[weightI] && weight <= weights[weightI + 1]) {
+          minWeight = weights[weightI];
+          // print('minWeight: $minWeight');
+          maxWeight = weights[weightI + 1];
+          // print('maxWeight: $maxWeight');
+        }
+      }
+      if (!_isAboveRange && !_isBelowRange) {
+        final ds = (weight - minWeight) / (maxWeight - minWeight);
+        final minWeigthStats = gChart[minWeight];
+        // print('minWeigthStats: $minWeigthStats');
+        final maxWeigthStats = gChart[maxWeight];
+        // print('maxWeigthStats: $maxWeigthStats');
+        final wThresholds = [
+          for (int i = 0; i < 5; i++)
+            (minWeigthStats![i] + (maxWeigthStats![i] - minWeigthStats[i]) * ds)
+          // .toInt()
+        ];
+        // print(wThresholds);
+        if (result < wThresholds.first) {
+          return 0;
+        } else if (result >= wThresholds.last) {
+          // print('On est niveau 20');
+          return 20;
+        } else {
+          int maxIndex = 0;
+          // print('maxIndex initialisé à 0');
+          for (int i = 0; i < 5; i++) {
+            // print('On rentre dans la loop');
+            // print('le result est $result');
+            // print('wThresholds[i] est ${wThresholds[i]}');
+            if (result >= wThresholds[i]) {
+              maxIndex = i + 1;
+              // print('La nouvelle valeur de maxIndex est $maxIndex');
+            }
+          }
+          var dLvl = (result - wThresholds[maxIndex - 1]) /
+              (wThresholds[maxIndex] - wThresholds[maxIndex - 1]);
+          var maxLvl;
+
+          switch (maxIndex) {
+            case 1:
+              maxLvl = 4;
+              break;
+            case 2:
+              maxLvl = 10;
+              break;
+            case 3:
+              maxLvl = 16;
+              break;
+            default:
+              maxLvl = 20;
+          }
+          var minLvl;
+          switch (maxLvl) {
+            case 4:
+              minLvl = 1;
+              break;
+            case 10:
+              minLvl = 4;
+              break;
+            case 16:
+              minLvl = 10;
+              break;
+            default:
+              minLvl = 16;
+          }
+          var Lvl = (minLvl + (maxLvl - minLvl) * dLvl).toInt();
+          return Lvl;
+        }
+      }
+    }
+    return 0;
+  }
 }

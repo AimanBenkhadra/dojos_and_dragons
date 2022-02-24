@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import './adventurer.dart';
+import './skill.dart';
 import './skills.dart';
 
 class Adventurers with ChangeNotifier {
@@ -12,11 +13,18 @@ class Adventurers with ChangeNotifier {
       adventurerFirstName: 'Darvin',
       adventurerLastName: 'Buckdragon',
       height: 180,
-      weight: 79,
-      skills: [
-        'Push Up',
-        'Pull Up',
-      ],
+      weight: 75,
+      skills: {
+        SkillName.pushUp: 10,
+        SkillName.pullUp: 9,
+      },
     ),
   ];
+
+  Adventurer currentAdventurer = Adventurer(id: '000');
+
+  void setCurrentAdventurer(String id) {
+    currentAdventurer = adventurers.firstWhere((adv) => adv.id == id);
+    notifyListeners();
+  }
 }

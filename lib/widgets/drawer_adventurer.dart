@@ -1,7 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-import '/screens/qi_screen.dart';
+import '../screens/profile_screen.dart';
+import '../screens/qi_screen.dart';
 
 class DrawerAdventurer extends StatelessWidget {
   @override
@@ -31,7 +32,10 @@ class DrawerAdventurer extends StatelessWidget {
               'Profile',
               style: Theme.of(context).textTheme.headline3,
             ),
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context)
+                  .pushReplacementNamed(ProfileScreen.routeName);
+            },
           ),
           const Divider(),
           ListTile(

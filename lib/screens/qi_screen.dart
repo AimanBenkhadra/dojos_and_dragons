@@ -1,7 +1,11 @@
-import 'package:dojos_and_dragons/widgets/drawer_adventurer.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'package:provider/provider.dart';
+
+import '../model/ability.dart';
+import '../model/skills.dart';
+import '../widgets/drawer_adventurer.dart';
+import '../widgets/skill_item.dart';
 
 class QiScreen extends StatefulWidget {
   static const routeName = '/qi';
@@ -19,6 +23,15 @@ class _QiScreenState extends State<QiScreen> {
     'Stam Qi',
     'Core Qi',
     'Legs Qi',
+  ];
+  final _pageAbilities = [
+    [Ability.push],
+    [Ability.pull],
+    [Ability.flex],
+    Ability.values,
+    [Ability.stam],
+    [Ability.core],
+    [Ability.legs],
   ];
 
   @override
@@ -95,11 +108,26 @@ class _QiScreenState extends State<QiScreen> {
           ),
           title: 'legs'),
     ];
-    final _pages = [
-      for (final pageName in _pageNames)
-        Center(
-          child: Text(pageName),
-        ),
+    final skills = Provider.of<Skills>(context, listen: false).skills;
+    List<Widget> _pages = [
+      for (int i = 0; i < _pageNames.length; i++)
+        ListView.builder(
+            itemCount: skills
+                .where((s) => _pageAbilities[i].contains(s.associatedAbility))
+                .length,
+            itemBuilder: (_, y) {
+              if (skills
+                  .where((s) => _pageAbilities[i].contains(s.associatedAbility))
+                  .isNotEmpty)
+                return SkillItem(skills
+                    .where(
+                        (s) => _pageAbilities[i].contains(s.associatedAbility))
+                    .toList()[y]);
+              else
+                return (Center(
+                  child: Text('No such skill yet'),
+                ));
+            })
     ];
     return DefaultTabController(
       length: 7,
@@ -111,6 +139,7 @@ class _QiScreenState extends State<QiScreen> {
               _pageNames[_pageIndex],
             ),
           ),
+          drawer: DrawerAdventurer(),
           body: TabBarView(children: _pages),
           bottomNavigationBar: ConvexAppBar(
             onTabNotify: (ind) {

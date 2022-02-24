@@ -2,8 +2,13 @@ import './ability.dart';
 import './measurement.dart';
 import './gender.dart';
 
+enum SkillName {
+  pushUp,
+  pullUp,
+}
+
 class Skill {
-  String name;
+  SkillName name;
   Ability associatedAbility;
   Measurement measurement;
   Map<Gender, Map<int, List<int>>> weightChart;
@@ -14,4 +19,15 @@ class Skill {
     required this.measurement,
     required this.weightChart,
   });
+
+  String get nameString {
+    switch (name) {
+      case SkillName.pushUp:
+        return 'Push Up';
+      case SkillName.pullUp:
+        return 'Pull Up';
+      default:
+        return 'Unknown Skill';
+    }
+  }
 }

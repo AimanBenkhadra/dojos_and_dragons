@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import './screens/profile_screen.dart';
-import 'screens/qi_screen.dart';
+import './screens/qi_screen.dart';
+import './screens/qi_charge_screen.dart';
 import './model/adventurers.dart';
 import './model/auth.dart';
+import './model/skills.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,6 +29,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => Auth(),
         ),
+
+        /// Skills Provider
+        ChangeNotifierProvider(
+          create: (_) => Skills(),
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -38,6 +45,7 @@ class MyApp extends StatelessWidget {
           '/': (_) => ProfileScreen(),
           ProfileScreen.routeName: (_) => ProfileScreen(),
           QiScreen.routeName: (_) => QiScreen(),
+          QiChargeScreen.routeName: (_) => QiChargeScreen(),
         },
       ),
     );
