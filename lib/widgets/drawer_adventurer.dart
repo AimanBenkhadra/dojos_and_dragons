@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+import '/screens/qi_screen.dart';
+
 class DrawerAdventurer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -44,7 +46,9 @@ class DrawerAdventurer extends StatelessWidget {
               'Qi',
               style: Theme.of(context).textTheme.headline3,
             ),
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).pushReplacementNamed(QiScreen.routeName);
+            },
           ),
           const Divider(),
         ],
