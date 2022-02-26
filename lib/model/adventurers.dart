@@ -7,16 +7,16 @@ import './skills.dart';
 class Adventurers with ChangeNotifier {
   final adventurers = [
     Adventurer(
-      id: '001',
+      id: 'u5oGEG8gfb15qIXSWZ6G',
       firstName: 'Aiman',
       lastName: 'Benkhadra',
       adventurerFirstName: 'Darvin',
       adventurerLastName: 'Buckdragon',
       height: 180,
-      weight: 75,
+      weight: 79,
       skills: {
         SkillName.pushUp: 10,
-        SkillName.pullUp: 9,
+        SkillName.pullUp: 10,
       },
     ),
   ];
