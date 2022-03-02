@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../screens/profile_screen.dart';
 import '../screens/qi_screen.dart';
@@ -52,6 +53,24 @@ class DrawerAdventurer extends StatelessWidget {
             ),
             onTap: () {
               Navigator.of(context).pushReplacementNamed(QiScreen.routeName);
+            },
+          ),
+          const Divider(),
+          const Spacer(),
+          ListTile(
+            leading: Icon(
+              Icons.exit_to_app,
+              size: max(
+                MediaQuery.of(context).size.height * 0.07,
+                MediaQuery.of(context).size.width * 0.07,
+              ),
+            ),
+            title: Text(
+              'Sign Out',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            onTap: () {
+              FirebaseAuth.instance.signOut();
             },
           ),
           const Divider(),

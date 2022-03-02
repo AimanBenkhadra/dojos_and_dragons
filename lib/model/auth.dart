@@ -10,7 +10,7 @@ import './http_exception.dart';
 class Auth with ChangeNotifier {
   String? _token;
   DateTime? _expiryDate;
-  String? _userId = '001';
+  String? _userId = 'u5oGEG8gfb15qIXSWZ6G';
   Timer? _authTimer;
 
   bool get isAuth => token != null;

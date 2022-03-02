@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import './firebase_options.dart';
 
-import './screens/profile_screen.dart';
-import './screens/qi_screen.dart';
-import './screens/qi_charge_screen.dart';
 import './model/adventurers.dart';
 import './model/auth.dart';
 import './model/skills.dart';
+
+import './screens/login_screen.dart';
+import './screens/profile_screen.dart';
+import './screens/qi_charge_screen.dart';
+import './screens/qi_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,13 +46,23 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        title: 'Doragons',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.red),
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange),
         ),
-        // home: ProfileScreen(),
+        home: StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (_, user) {
+            if (user.hasData) {
+              return ProfileScreen();
+            } else {
+              return LoginScreen();
+            }
+          },
+        ),
         routes: {
-          '/': (_) => ProfileScreen(),
+          // '/': (_) => ProfileScreen(),
           ProfileScreen.routeName: (_) => ProfileScreen(),
           QiScreen.routeName: (_) => QiScreen(),
           QiChargeScreen.routeName: (_) => QiChargeScreen(),
