@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import './profile_screen.dart';
-
+// ignore: use_key_in_widget_constructors
 class LoginScreen extends StatefulWidget {
   static const routeName = '/login';
 
@@ -18,7 +16,6 @@ class _LoginScreenState extends State<LoginScreen> {
   /// Boolean that will tell us if the user is loging in (_signingUp == false)
   /// or signing up (_signingUp == true)
   bool _signingUp = false;
-  bool _isNotAnEmail = false;
 
   /// The key for the form field below
   final _formKey = GlobalKey<FormState>();
@@ -168,8 +165,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     validator: (val) {
                       if (val == null || val.isEmpty) {
                         return '    please enter an email address';
-                      } else if (_isNotAnEmail) {
-                        return 'this is not an email';
                       } else {
                         return null;
                       }
