@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import './firebase_options.dart';
 
@@ -10,6 +11,7 @@ import './model/auth.dart';
 import './model/skills.dart';
 
 import './screens/login_screen.dart';
+import './screens/new_adventurer_screen.dart';
 import './screens/profile_screen.dart';
 import './screens/qi_charge_screen.dart';
 import './screens/qi_screen.dart';
@@ -51,11 +53,27 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange),
         ),
-        home: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (_, user) {
-            if (user.hasData) {
-              return ProfileScreen();
+        home: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.userChanges(),
+          builder: (_, AsyncSnapshot<User?> user) {
+            if (user.hasData && user.data!.emailVerified) {
+              return FutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .collection('adventurers')
+                      .doc(user.data!.uid)
+                      .get(),
+                  builder:
+                      (_, AsyncSnapshot<DocumentSnapshot> adventurerSnapshot) {
+                    if (adventurerSnapshot.hasData &&
+                        !adventurerSnapshot.data!.exists) {
+                      return NewAdventurerScreen();
+                    } else if (adventurerSnapshot.connectionState ==
+                        ConnectionState.done) {
+                      return ProfileScreen();
+                    }
+                    return const Scaffold(
+                        body: Center(child: CircularProgressIndicator()));
+                  });
             } else {
               return LoginScreen();
             }

@@ -59,6 +59,36 @@ class _LoginScreenState extends State<LoginScreen> {
           email: _emailController.text,
           password: _pwController.text,
         );
+        if (auth.currentUser != null && !auth.currentUser!.emailVerified) {
+          setState(() {
+            _isAuthLoading = true;
+          });
+          await auth.currentUser!.sendEmailVerification();
+          setState(() {
+            _isAuthLoading = false;
+          });
+          await showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: const Text('Verifying...'),
+              content: Text(
+                'An email was sent to ${_emailController.text}. Please'
+                ' confirm your email address by clicking on the link in the '
+                'email and then sign up.',
+                softWrap: true,
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+          setState(() {
+            _signingUp = false;
+          });
+        }
       } on FirebaseAuthException catch (fbae) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -84,6 +114,36 @@ class _LoginScreenState extends State<LoginScreen> {
           email: _emailController.text,
           password: _pwController.text,
         );
+        if (auth.currentUser != null && !auth.currentUser!.emailVerified) {
+          setState(() {
+            _isAuthLoading = true;
+          });
+          await auth.currentUser!.sendEmailVerification();
+          setState(() {
+            _isAuthLoading = false;
+          });
+          await showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: const Text('Verifying...'),
+              content: Text(
+                'An email was sent to ${_emailController.text}. Please'
+                ' confirm your email address by clicking on the link in the '
+                'email and then sign up.',
+                softWrap: true,
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+          setState(() {
+            _signingUp = false;
+          });
+        }
       } on FirebaseAuthException catch (fbae) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -192,8 +252,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     focusNode: _pwFocus,
                     obscureText: true,
                     textAlign: TextAlign.center,
-                    onFieldSubmitted: (_) =>
-                        FocusScope.of(context).requestFocus(_repeatPwFocus),
+                    onFieldSubmitted: (_) {
+                      if (_signingUp) {
+                        FocusScope.of(context).requestFocus(_repeatPwFocus);
+                      } else {
+                        _go();
+                      }
+                    },
                     textInputAction: _signingUp
                         ? TextInputAction.next
                         : TextInputAction.done,
