@@ -51,6 +51,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Doragons',
         theme: ThemeData(
+          primarySwatch: Colors.orange,
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange),
         ),
         home: StreamBuilder<User?>(
