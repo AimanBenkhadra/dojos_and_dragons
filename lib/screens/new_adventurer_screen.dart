@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 
 import '../model/auth.dart';
 
+import './profile_screen.dart';
+
 class NewAdventurerScreen extends StatefulWidget {
   const NewAdventurerScreen({Key? key}) : super(key: key);
 
@@ -100,7 +102,8 @@ class _NewAdventurerScreenState extends State<NewAdventurerScreen> {
       weight: double.parse(_weightController.text),
       gender: _genderController.text.toUpperCase(),
     );
-    _loading = false;
+    Navigator.of(context).pushReplacementNamed(ProfileScreen.routeName);
+    // _loading = false;
   }
 
   @override

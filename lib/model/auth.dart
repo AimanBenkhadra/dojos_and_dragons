@@ -51,6 +51,14 @@ class Auth with ChangeNotifier {
         'birth day': dob,
         'weight': weight,
         'gender': gender,
+        'abilities': {
+          'push': 0,
+          'pull': 0,
+          'stam': 0,
+          'flex': 0,
+          'core': 0,
+          'legs': 0,
+        }
       });
     } catch (e) {
       rethrow;

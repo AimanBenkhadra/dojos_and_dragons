@@ -98,9 +98,9 @@ class _QiScreenState extends State<QiScreen> {
           ),
           title: 'core'),
       TabItem(
-          icon: Icon(
+          icon: const Icon(
             Icons.horizontal_split_rounded,
-            color: Theme.of(context).colorScheme.inversePrimary,
+            color: Colors.white,
           ),
           activeIcon: Icon(
             Icons.horizontal_split_rounded,

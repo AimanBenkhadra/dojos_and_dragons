@@ -1,4 +1,5 @@
 import 'package:dojos_and_dragons/model/ability.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_radar_chart/flutter_radar_chart.dart';
 import 'package:provider/provider.dart';
@@ -12,14 +13,16 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final firestore = FirebaseFirestore.instance;
+  final fAuth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     // final adventurer = Provider.of<Adventurer>(context);
+    final loggedAdventurer = fAuth.currentUser;
     final adventurers = firestore.collection('adventurers');
 
     return FutureBuilder(
-        future: adventurers.doc('u5oGEG8gfb15qIXSWZ6G').get(),
+        future: adventurers.doc(loggedAdventurer!.uid).get(),
         builder: (ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasError) {
             return const Center(
@@ -50,7 +53,7 @@ class _ProfileState extends State<Profile> {
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   Text(
-                    '1',
+                    '0',
                     style: const TextStyle(
                       fontSize: 108,
                     ),
