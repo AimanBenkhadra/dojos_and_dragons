@@ -31,6 +31,8 @@ class Adventurer with ChangeNotifier {
     this.skills = const {},
   });
 
+  String get fName => firstName;
+
   int get personaLevel {
     int levels = abilities.values.reduce((a, b) => a + b);
     return levels ~/ abilities.length;

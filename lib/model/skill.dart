@@ -5,6 +5,7 @@ import './gender.dart';
 enum SkillName {
   pushUp,
   pullUp,
+  airSquat,
 }
 
 class Skill {
@@ -26,6 +27,8 @@ class Skill {
         return 'Push Up';
       case SkillName.pullUp:
         return 'Pull Up';
+      case SkillName.airSquat:
+        return 'Air Squat';
       default:
         return 'Unknown Skill';
     }

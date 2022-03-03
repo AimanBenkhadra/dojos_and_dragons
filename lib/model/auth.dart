@@ -2,17 +2,29 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dojos_and_dragons/model/gender.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import './http_exception.dart';
+import './adventurer.dart';
 
 class Auth with ChangeNotifier {
-  late String uid;
+  /// Instantiate Firebase Auth
+  final fAuth = FirebaseAuth.instance;
+
+  /// Instantiate Firestore
+  final firestore = FirebaseFirestore.instance;
+
+  /// This will be the uid of the user
+  String get uid => fAuth.currentUser!.uid;
+
+  /// This will be the inner representation of the user's adventurer
+  late Adventurer adventurer;
   // DateTime? _expiryDate;
-  String? _userId = 'u5oGEG8gfb15qIXSWZ6G';
+  // String? _userId = 'u5oGEG8gfb15qIXSWZ6G';
   // Timer? _authTimer;
 
   // bool get isAuth => token != null;
@@ -26,9 +38,9 @@ class Auth with ChangeNotifier {
   //   return null;
   // }
 
-  String? get userId {
-    return _userId;
-  }
+  // String? get userId {
+  //   return _userId;
+  // }
 
   Future<void> addAdventurer({
     required String advFName,
@@ -40,10 +52,7 @@ class Auth with ChangeNotifier {
     required String gender,
   }) async {
     try {
-      await FirebaseFirestore.instance
-          .collection('adventurers')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .set({
+      await firestore.collection('adventurers').doc(uid).set({
         'adventurer first name': advFName,
         'adventurer last name': advLName,
         'first name': firstName,
@@ -60,9 +69,24 @@ class Auth with ChangeNotifier {
           'legs': 0,
         }
       });
+      // await loadAdventurer();
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<void> loadAdventurer() async {
+    final fsAdventurer =
+        await firestore.collection('adventurers').doc(uid).get();
+    adventurer = Adventurer(
+      id: uid,
+      firstName: fsAdventurer.get('first name'),
+      lastName: fsAdventurer.get('last name'),
+      gender: fsAdventurer.get('gender') == 'M' ? Gender.M : Gender.F,
+      adventurerFirstName: fsAdventurer.get('adventurer first name'),
+      adventurerLastName: fsAdventurer.get('adventurer last name'),
+      weight: fsAdventurer.get('weight'),
+    );
   }
 
   Future<void> _authenticate(
@@ -85,7 +109,7 @@ class Auth with ChangeNotifier {
         throw HttpException(responseData['error']['message']);
       }
       // _token = responseData['idToken'];
-      _userId = responseData['localId'];
+      // _userId = responseData['localId'];
     } catch (e) {}
   }
 }

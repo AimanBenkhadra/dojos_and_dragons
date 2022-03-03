@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../model/adventurer.dart';
+import '../model/auth.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -13,87 +14,102 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  final firestore = FirebaseFirestore.instance;
-  final fAuth = FirebaseAuth.instance;
+  // final firestore = FirebaseFirestore.instance;
+  // final fAuth = FirebaseAuth.instance;
+  bool _loading = true;
   @override
   Widget build(BuildContext context) {
     // final adventurer = Provider.of<Adventurer>(context);
-    final loggedAdventurer = fAuth.currentUser;
-    final adventurers = firestore.collection('adventurers');
+    // final loggedAdventurer = fAuth.currentUser;
+    // final adventurers = firestore.collection('adventurers');
 
+    // return FutureBuilder(
+    //     future: Provider.of<Auth>(context).loadAdventurer(),
+    //     builder: (ctx, AsyncSnapshot<Adventurer> adventurerSnapshot) {
+    //       if (adventurerSnapshot.hasError) {
+    //         return const Center(
+    //           child: Text('Something went wrong...'),
+    //         );
+    //       }
+
+    //       // if (adventurer.hasData) {
+    //       //   return const Center(
+    //       //     child: Text('This adventurer does not exist...'),
+    //       //   );
+    //       // }
+
+    //       if (adventurerSnapshot.connectionState == ConnectionState.done) {
+    //         final adventurer = adventurerSnapshot.data!;
+    // final adventurer = Provider.of<Auth>(context).adventurer;
     return FutureBuilder(
-        future: adventurers.doc(loggedAdventurer!.uid).get(),
-        builder: (ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return const Center(
-              child: Text('Something went wrong...'),
-            );
-          }
+      future: Provider.of<Auth>(context, listen: false).loadAdventurer(),
+      builder: (context, AsyncSnapshot<void> snap) {
+        if (snap.connectionState == ConnectionState.done) {
+          final adventurer = Provider.of<Auth>(context).adventurer;
 
-          if (snapshot.hasData && !snapshot.data!.exists) {
-            return const Center(
-              child: Text('This adventurer does not exist...'),
-            );
-          }
-
-          if (snapshot.connectionState == ConnectionState.done) {
-            return SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      '${snapshot.data!['adventurer first name']} ${snapshot.data!['adventurer last name'].toUpperCase()}',
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    '${adventurer.adventurerFirstName} ${adventurer.adventurerLastName.toUpperCase()}',
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
-                  Text(
-                    'Persona',
-                    style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                Text(
+                  'Persona',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                Text(
+                  adventurer.personaLevel.toString(),
+                  style: const TextStyle(
+                    fontSize: 108,
                   ),
-                  Text(
-                    '0',
-                    style: const TextStyle(
-                      fontSize: 108,
-                    ),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.width,
+                  child: RadarChart(
+                    ticks: const [4, 10, 16, 20],
+                    features: const [
+                      'push',
+                      'pull',
+                      'core',
+                      'legs',
+                      'stam',
+                      'flex',
+                    ],
+                    data: [
+                      [
+                        adventurer.abilities[Ability.push]!.toInt(),
+                        adventurer.abilities[Ability.pull]!.toInt(),
+                        adventurer.abilities[Ability.core]!.toInt(),
+                        adventurer.abilities[Ability.legs]!.toInt(),
+                        adventurer.abilities[Ability.stam]!.toInt(),
+                        adventurer.abilities[Ability.flex]!.toInt(),
+                      ]
+                    ],
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.width,
-                    child: RadarChart(
-                      ticks: const [4, 10, 16, 20],
-                      features: const [
-                        'push',
-                        'pull',
-                        'core',
-                        'legs',
-                        'stam',
-                        'flex',
-                      ],
-                      data: [
-                        [
-                          snapshot.data!['abilities']['push'],
-                          snapshot.data!['abilities']['pull'],
-                          snapshot.data!['abilities']['core'],
-                          snapshot.data!['abilities']['legs'],
-                          snapshot.data!['abilities']['stam'],
-                          snapshot.data!['abilities']['flex'],
-                        ]
-                      ],
-                    ),
-                  ),
-                  Text(
-                    'aka ${snapshot.data!['first name']} ${snapshot.data!['last name'].toUpperCase()}',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                ],
-              ),
-            );
-          }
-          return const Center(
-            child: Text('...loading...'),
+                ),
+                Text(
+                  'aka ${adventurer.firstName} ${adventurer.lastName.toUpperCase()}',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ],
+            ),
           );
-        });
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
   }
+  // return const Center(
+  //   child: CircularProgressIndicator(),
+  // );
 }
+  //       );
+  // }
+// }
