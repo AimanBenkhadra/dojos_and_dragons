@@ -6,6 +6,7 @@ enum SkillName {
   pushUp,
   pullUp,
   airSquat,
+  squat,
 }
 
 class Skill {
@@ -29,8 +30,32 @@ class Skill {
         return 'Pull Up';
       case SkillName.airSquat:
         return 'Air Squat';
+      case SkillName.squat:
+        return 'Squat';
       default:
         return 'Unknown Skill';
+    }
+  }
+
+  String get instructions {
+    switch (measurement) {
+      case Measurement.lvl:
+        return 'Do a ${nameString.toUpperCase()} and enter the level you have '
+            'reached.';
+      case Measurement.min:
+        return 'Do a ${nameString.toUpperCase()} and enter the number of '
+            'minutes it took you.';
+      case Measurement.rep:
+        return 'Do as many ${nameString.toUpperCase()}s as you can and enter '
+            'the number of reps you were able to do.';
+      case Measurement.rm1:
+        return 'Do ${nameString.toUpperCase()}s and enter the number of reps '
+            'you were able to da as well as the weight used.';
+      case Measurement.sec:
+        return 'Do a ${nameString.toUpperCase()} and enter the number of '
+            'seconds it took you.';
+      default:
+        return 'Not sure what you should do...';
     }
   }
 }
