@@ -7,6 +7,7 @@ enum SkillName {
   pullUp,
   bodyweightSquat,
   squat,
+  lyingLegRaise,
 }
 
 class Skill {
@@ -32,6 +33,8 @@ class Skill {
         return 'Bodyweight Squat';
       case SkillName.squat:
         return 'Squat';
+      case SkillName.lyingLegRaise:
+        return 'Lying Leg Raise';
       default:
         return 'Unknown Skill';
     }
