@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import './firebase_options.dart';
 
+import './model/adventurer.dart';
 import './model/adventurers.dart';
 import './model/auth.dart';
 import './model/skills.dart';
@@ -15,6 +16,7 @@ import './screens/new_adventurer_screen.dart';
 import './screens/profile_screen.dart';
 import './screens/qi_charge_screen.dart';
 import './screens/qi_screen.dart';
+import './screens/result_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +34,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        /// Adventurer Provider
+        ChangeNotifierProvider(
+          create: (_) => Adventurer(),
+        ),
+
         /// Adventurers Provider
         ChangeNotifierProvider(
           create: (_) => Adventurers(),
@@ -85,6 +92,7 @@ class MyApp extends StatelessWidget {
           ProfileScreen.routeName: (_) => ProfileScreen(),
           QiScreen.routeName: (_) => QiScreen(),
           QiChargeScreen.routeName: (_) => QiChargeScreen(),
+          ResultScreen.routeName: (_) => ResultScreen(),
         },
       ),
     );

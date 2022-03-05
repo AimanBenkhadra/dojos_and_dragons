@@ -1,3 +1,4 @@
+import 'package:dojos_and_dragons/model/measurement.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -28,17 +29,40 @@ class SkillItem extends StatelessWidget {
         },
         leading: const CircleAvatar(),
         title: Text(skill.nameString),
-        subtitle: Text('Max Reps: ${currAdv.skills[skill.name] ?? 0}'),
+        subtitle: Row(
+          children: [
+            if (skill.measurement == Measurement.rep ||
+                skill.measurement == Measurement.rm1)
+              Text(
+                  '${currAdv.skills[skill.name]?['reps']?.toString() ?? 0.toString()} reps'),
+            if (skill.measurement == Measurement.rm1)
+              Text(
+                  ', ${currAdv.skills[skill.name]?['weight']?.toString() ?? 0.toString()} lbs'),
+            if (skill.measurement == Measurement.lvl)
+              Text(
+                  'Level ${currAdv.skills[skill.name]?['lvl']?.toString() ?? 0.toString()}'),
+            if (skill.measurement == Measurement.min)
+              Text(
+                  '${currAdv.skills[skill.name]?['min']?.toString() ?? 0.toString()} min '),
+            if (skill.measurement == Measurement.min)
+              if (skill.measurement == Measurement.min ||
+                  skill.measurement == Measurement.sec)
+                Text(
+                    '${currAdv.skills[skill.name]?['sec']?.toString() ?? 0.toString()} sec'),
+          ],
+        ),
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             const Spacer(),
-            Text('Lvl: ${skillsInfo.levelOfSkillWithWeight(
-              skill.name,
-              currAdv.gender,
-              79,
-              currAdv.skills[skill.name] ?? 0,
-            )}'),
+            Text('Lvl: '
+                // ${skillsInfo.levelOfSkillWithWeight(
+                //   skill.name,
+                //   currAdv.gender,
+                //   79,
+                '${currAdv.skills[skill.name]?.toString() ?? 0.toString()}'
+                // )}
+                ''),
             const Spacer(),
             const CircleAvatar(radius: 10),
             const Spacer(),

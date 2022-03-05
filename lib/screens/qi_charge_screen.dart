@@ -3,8 +3,12 @@ import 'package:dojos_and_dragons/model/skill.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../model/adventurer.dart';
+import '../model/auth.dart';
 import '../model/skill.dart';
 import '../model/skills.dart';
+
+import './result_screen.dart';
 
 class QiChargeScreen extends StatefulWidget {
   static const routeName = '/qi-charge';
@@ -16,6 +20,14 @@ class QiChargeScreen extends StatefulWidget {
 class _QiChargeScreenState extends State<QiChargeScreen> {
   /// The list of skills that will be initiated in initState
   late List<Skill> skillsInfo;
+
+  /// The adventurer will be instanciated in initState
+  late Adventurer adventurer;
+
+  /// Initial levels will be instanciated in initState
+  late int iSLevel; // level for the skill
+  late int iALevel; // level for ability
+  late int iPLevel; // persona level
 
   /// The key for the form
   final _formKey = GlobalKey<FormState>();
@@ -37,6 +49,7 @@ class _QiChargeScreenState extends State<QiChargeScreen> {
   @override
   void initState() {
     skillsInfo = Provider.of<Skills>(context, listen: false).skills;
+    adventurer = Provider.of<Auth>(context, listen: false).adventurer;
     super.initState();
   }
 
@@ -60,7 +73,64 @@ class _QiChargeScreenState extends State<QiChargeScreen> {
     super.dispose();
   }
 
-  void _charge() {}
+  Future<void> _charge(Skill skill) async {
+    final _isValid = _formKey.currentState?.validate() ?? false;
+    if (!_isValid) return;
+    double result;
+    switch (skill.measurement) {
+      case Measurement.lvl:
+        result = double.parse(_lvlController.text);
+        break;
+      case Measurement.min:
+        result = int.parse(_minController.text) +
+            int.parse(_secController.text) / 60;
+        break;
+      case Measurement.sec:
+        result = double.parse(_secController.text);
+        break;
+      case Measurement.rep:
+        result = int.parse(_repController.text).toDouble();
+        break;
+      case Measurement.rm1:
+        result = Provider.of<Skills>(context, listen: false).to1RM(
+          int.parse(_repController.text),
+          double.parse(_weightController.text),
+        );
+        break;
+      default:
+        result = 0;
+    }
+    final bool _skillLvlUp;
+    bool _abilityLvlUp = false;
+    bool _personaLvlUp = false;
+    final level =
+        Provider.of<Skills>(context, listen: false).levelOfSkillWithWeight(
+      skill.name,
+      adventurer.gender,
+      adventurer.weight,
+      result,
+    );
+    _skillLvlUp = level > iSLevel;
+    if (_skillLvlUp) {
+      print('skill is ${skill.nameString} and level is $level.');
+      _abilityLvlUp = await adventurer.tryAbilityLvlUp(skill, level);
+      print('_abilityLvlUp = $_abilityLvlUp');
+    }
+    if (_abilityLvlUp) {
+      print(
+          'iPLevel = $iPLevel, adventurer.personaLevel = ${adventurer.personaLevel}');
+      _personaLvlUp = iPLevel < adventurer.personaLevel;
+    }
+
+    Navigator.of(context)
+        .pushReplacementNamed(ResultScreen.routeName, arguments: {
+      'skill': skill.nameString,
+      'skill level': level,
+      'skill lu': _skillLvlUp,
+      'ability lu': _abilityLvlUp,
+      'persona lu': _personaLvlUp,
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +140,12 @@ class _QiChargeScreenState extends State<QiChargeScreen> {
 
     /// Get the skill object according to the skill name
     final skill = skillsInfo.firstWhere((s) => s.name == skillName);
+
+    /// Get the initial levels here
+    iSLevel = adventurer.skills[skillName]?['lvl'] ?? 0;
+    iALevel = adventurer.abilities[skill.associatedAbility]!;
+    iPLevel = adventurer.personaLevel;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(skill.nameString),
@@ -125,7 +201,7 @@ class _QiChargeScreenState extends State<QiChargeScreen> {
                           ? TextInputAction.next
                           : TextInputAction.done,
                       validator: (rep) {
-                        if (rep != null || rep!.isEmpty) {
+                        if (rep == null || rep.isEmpty) {
                           return '--- enter a number';
                         } else if (int.tryParse(rep) == null) {
                           return '--- this is not a valid number';
@@ -155,7 +231,7 @@ class _QiChargeScreenState extends State<QiChargeScreen> {
                       ),
                       textAlign: TextAlign.center,
                       validator: (weight) {
-                        if (weight != null || weight!.isEmpty) {
+                        if (weight == null || weight.isEmpty) {
                           return '--- enter a weight';
                         } else if (double.tryParse(weight) == null) {
                           return '--- this is not a valid weight';
@@ -185,7 +261,7 @@ class _QiChargeScreenState extends State<QiChargeScreen> {
                       ),
                       textAlign: TextAlign.center,
                       validator: (lvl) {
-                        if (lvl != null || lvl!.isEmpty) {
+                        if (lvl == null || lvl.isEmpty) {
                           return '--- enter a level';
                         }
                         return null;
@@ -214,7 +290,7 @@ class _QiChargeScreenState extends State<QiChargeScreen> {
                       textAlign: TextAlign.center,
                       textInputAction: TextInputAction.next,
                       validator: (min) {
-                        if (min != null || min!.isEmpty) {
+                        if (min == null || min.isEmpty) {
                           return '--- enter a number of minutes';
                         } else if (int.tryParse(min) == null) {
                           return '--- this is not a valid number';
@@ -245,10 +321,10 @@ class _QiChargeScreenState extends State<QiChargeScreen> {
                       ),
                       textAlign: TextAlign.center,
                       validator: (sec) {
-                        if ((sec != null || sec!.isEmpty) &&
+                        if ((sec == null || sec.isEmpty) &&
                             skill.measurement == Measurement.sec) {
                           return '--- enter a number of seconds';
-                        } else if (int.tryParse(sec) == null) {
+                        } else if (int.tryParse(sec!) == null) {
                           return '--- this is not a valid number';
                         }
                         return null;
@@ -262,7 +338,10 @@ class _QiChargeScreenState extends State<QiChargeScreen> {
                   ),
                 ),
               GestureDetector(
-                onTap: _charge,
+                onTap: () {
+                  // print('skill is ${skill.nameString}');
+                  _charge(skill);
+                },
                 child: Container(
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,

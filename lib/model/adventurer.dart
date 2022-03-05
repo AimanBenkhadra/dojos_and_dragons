@@ -1,6 +1,8 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import './ability.dart';
 import './gender.dart';
@@ -16,11 +18,11 @@ class Adventurer with ChangeNotifier {
   DateTime dateOfBirth = DateTime.now();
   double height;
   double weight;
-  Map<Ability, int> abilities = {for (var key in Ability.values) key: 0};
-  Map<SkillName, int> skills;
+  Map<Ability, int> abilities;
+  Map<SkillName, Map<String, dynamic>> skills;
 
   Adventurer({
-    required this.id,
+    this.id = '',
     this.firstName = '',
     this.lastName = '',
     this.gender = Gender.M,
@@ -29,6 +31,7 @@ class Adventurer with ChangeNotifier {
     this.height = 0,
     this.weight = 0,
     this.skills = const {},
+    this.abilities = const {},
   });
 
   String get fName => firstName;
@@ -36,5 +39,50 @@ class Adventurer with ChangeNotifier {
   int get personaLevel {
     int levels = abilities.values.reduce((a, b) => a + b);
     return levels ~/ abilities.length;
+  }
+
+  Future<bool> tryAbilityLvlUp(Skill skill, int lvl) async {
+    print('abilities[skill.associatedAbility] = '
+        'abilities[${skill.associatedAbility}] = '
+        '${abilities[skill.associatedAbility]}');
+    final _lvlUp = lvl > abilities[skill.associatedAbility]!;
+
+    if (_lvlUp) {
+      final String abilString;
+      switch (skill.associatedAbility) {
+        case Ability.core:
+          abilString = 'core';
+          break;
+        case Ability.flex:
+          abilString = 'flex';
+          break;
+        case Ability.legs:
+          abilString = 'legs';
+          break;
+        case Ability.pull:
+          abilString = 'pull';
+          break;
+        case Ability.push:
+          abilString = 'push';
+          break;
+        case Ability.stam:
+          abilString = 'stam';
+          break;
+        default:
+          abilString = 'err';
+      }
+      await FirebaseFirestore.instance
+          .collection('adventurers')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'abilities.$abilString': lvl});
+      abilities[skill.associatedAbility] = lvl;
+      notifyListeners();
+    }
+    return _lvlUp;
+  }
+
+  void abilityLevelUp(Ability ability) {
+    abilities[ability] = abilities[ability]! + 1;
+    notifyListeners();
   }
 }

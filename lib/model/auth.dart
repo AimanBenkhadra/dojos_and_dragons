@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dojos_and_dragons/model/ability.dart';
 import 'package:dojos_and_dragons/model/gender.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +61,18 @@ class Auth with ChangeNotifier {
   Future<void> loadAdventurer() async {
     final fsAdventurer =
         await firestore.collection('adventurers').doc(uid).get();
+    // print('core');
+    // print(fsAdventurer.get(FieldPath(['abilities', 'core'])));
+    // print('flex');
+    // print(fsAdventurer.get(FieldPath(['abilities', 'flex'])));
+    // print('legs');
+    // print(fsAdventurer.get(FieldPath(['abilities', 'legs'])));
+    // print('pull');
+    // print(fsAdventurer.get(FieldPath(['abilities', 'pull'])));
+    // print('push');
+    // print(fsAdventurer.get(FieldPath(['abilities', 'push'])));
+    // print('stam');
+    // print(fsAdventurer.get(FieldPath(['abilities', 'stam'])));
     adventurer = Adventurer(
       id: uid,
       firstName: fsAdventurer.get('first name'),
@@ -68,6 +81,26 @@ class Auth with ChangeNotifier {
       adventurerFirstName: fsAdventurer.get('adventurer first name'),
       adventurerLastName: fsAdventurer.get('adventurer last name'),
       weight: fsAdventurer.get('weight'),
+      abilities: {
+        Ability.core: fsAdventurer.get(FieldPath(['abilities', 'core'])),
+        Ability.flex: fsAdventurer.get(FieldPath(['abilities', 'flex'])),
+        Ability.legs: fsAdventurer.get(FieldPath(['abilities', 'legs'])),
+        Ability.pull: fsAdventurer.get(FieldPath(['abilities', 'pull'])),
+        Ability.push: fsAdventurer.get(FieldPath(['abilities', 'push'])),
+        Ability.stam: fsAdventurer.get(FieldPath(['abilities', 'stam'])),
+      },
     );
+    // print('core');
+    // print(adventurer.abilities[Ability.core]);
+    // print('flex');
+    // print(adventurer.abilities[Ability.flex]);
+    // print('legs');
+    // print(adventurer.abilities[Ability.legs]);
+    // print('pull');
+    // print(adventurer.abilities[Ability.pull]);
+    // print('push');
+    // print(adventurer.abilities[Ability.push]);
+    // print('stam');
+    // print(adventurer.abilities[Ability.stam]);
   }
 }
