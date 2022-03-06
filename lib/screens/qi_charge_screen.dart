@@ -122,6 +122,13 @@ class _QiChargeScreenState extends State<QiChargeScreen> {
       _personaLvlUp = iPLevel < adventurer.personaLevel;
     }
 
+    adventurer.addQiGem(
+      iSkill: skill,
+      iReps: int.tryParse(_repController.text),
+      iWeight: double.tryParse(_weightController.text),
+      iLevel: level,
+    );
+
     Navigator.of(context)
         .pushReplacementNamed(ResultScreen.routeName, arguments: {
       'skill': skill.nameString,

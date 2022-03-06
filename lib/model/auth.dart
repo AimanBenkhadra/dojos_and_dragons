@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dojos_and_dragons/model/ability.dart';
-import 'package:dojos_and_dragons/model/gender.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import './http_exception.dart';
+import './ability.dart';
 import './adventurer.dart';
+import './gender.dart';
+import './qi_gem.dart';
+import './skills.dart';
 
 class Auth with ChangeNotifier {
   /// Instantiate Firebase Auth
@@ -58,9 +59,15 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<void> loadAdventurer() async {
+  Future<void> loadAdventurer(context) async {
+    /// Instanciate the adventurer from firestore
     final fsAdventurer =
         await firestore.collection('adventurers').doc(uid).get();
+    print('step 1 done');
+    final qiGemIds = fsAdventurer.data()!['qi gems'];
+    print('step 2 done');
+    final qiGems = await firestore.collection('qi gems').get();
+    print('step 3 done');
     // print('core');
     // print(fsAdventurer.get(FieldPath(['abilities', 'core'])));
     // print('flex');
@@ -73,6 +80,7 @@ class Auth with ChangeNotifier {
     // print(fsAdventurer.get(FieldPath(['abilities', 'push'])));
     // print('stam');
     // print(fsAdventurer.get(FieldPath(['abilities', 'stam'])));
+
     adventurer = Adventurer(
       id: uid,
       firstName: fsAdventurer.get('first name'),
@@ -89,7 +97,40 @@ class Auth with ChangeNotifier {
         Ability.push: fsAdventurer.get(FieldPath(['abilities', 'push'])),
         Ability.stam: fsAdventurer.get(FieldPath(['abilities', 'stam'])),
       },
+      qiGems: [],
     );
+    print('step 4 done');
+    for (var qiGem in qiGems.docs.map((e) => e.data())) {
+      print('For loop iteration start!');
+      final inSkill = Provider.of<Skills>(context, listen: false)
+          .fromString(qiGem['skill'])!;
+      print('inSkill: $inSkill');
+      final inBW = qiGem['body weight'];
+      print('inBW: $inBW');
+      final inReps = qiGem['reps'];
+      print('inReps: $inReps');
+      final inWeight = qiGem['weight'];
+      print('inWeight: $inWeight');
+      // final inWhenTS = qiGem['when'] as Timestamp;
+      // print('inWhenTS: $inWhenTS');
+      final inWhen = (qiGem['when'] as Timestamp).toDate();
+      print('inWhen: $inWhen');
+      final inLevel = qiGem['level'];
+      print('inLevel: $inLevel');
+
+      adventurer.qiGems.add(
+        QiGem(
+          skill: inSkill,
+          bw: inBW,
+          reps: inReps,
+          weight: inWeight,
+          when: inWhen,
+          level: inLevel,
+        ),
+      );
+      print('For loop iteration end!');
+    }
+    print('step 5 done');
     // print('core');
     // print(adventurer.abilities[Ability.core]);
     // print('flex');

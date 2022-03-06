@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import './ability.dart';
 import './gender.dart';
+import './qi_gem.dart';
 import './skill.dart';
 
 class Adventurer with ChangeNotifier {
@@ -20,6 +21,7 @@ class Adventurer with ChangeNotifier {
   double weight;
   Map<Ability, int> abilities;
   Map<SkillName, Map<String, dynamic>> skills;
+  List<QiGem> qiGems;
 
   Adventurer({
     this.id = '',
@@ -32,7 +34,14 @@ class Adventurer with ChangeNotifier {
     this.weight = 0,
     this.skills = const {},
     this.abilities = const {},
+    this.qiGems = const [],
   });
+
+  /// Instantiate Firestore Auth
+  final fba = FirebaseAuth.instance;
+
+  /// Instantiate Firestore Database
+  final fsdb = FirebaseFirestore.instance;
 
   String get fName => firstName;
 
@@ -84,5 +93,52 @@ class Adventurer with ChangeNotifier {
   void abilityLevelUp(Ability ability) {
     abilities[ability] = abilities[ability]! + 1;
     notifyListeners();
+  }
+
+  Future<void> addQiGem({
+    required Skill iSkill,
+    // required double iBw,
+    int? iReps,
+    double? iWeight,
+    required int iLevel,
+  }) async {
+    /// Instantiate
+    // final fsdb = FirebaseFirestore.instance;
+    // final fsa = FirebaseAuth.instance;
+    final iWhen = DateTime.now();
+
+    final fsQiGem = await fsdb.collection('qi gems').add({
+      'skill': iSkill.nameString,
+      'body weight': weight,
+      'reps': iReps,
+      'weight': iWeight,
+      'when': iWhen,
+      'level': iLevel,
+    });
+
+    final fsQiGemId = fsQiGem.id;
+
+    final List<String> fsQiGems = await fsdb
+        .collection('adventurers')
+        .doc(fba.currentUser!.uid)
+        .get()
+        .then((value) => value.data()!['qi gems'] ?? []);
+
+    final updateListOfQiGems = fsQiGems..add(fsQiGemId);
+    // print(updateListOfQiGems.toString());
+
+    await fsdb.collection('adventurers').doc(fba.currentUser!.uid).update({
+      'qi gems': FieldValue.arrayUnion([fsQiGemId])
+    });
+    // .update({'qi gems': updateListOfQiGems});
+    // qiGems.add(QiGem(
+    //   skill: iSkill,
+    //   bw: weight,
+    //   reps: iReps,
+    //   weight: iWeight,
+    //   when: iWhen,
+    //   level: iLevel,
+    // ));
+    // notifyListeners();
   }
 }

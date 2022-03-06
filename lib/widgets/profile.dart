@@ -42,10 +42,11 @@ class _ProfileState extends State<Profile> {
     //         final adventurer = adventurerSnapshot.data!;
     // final adventurer = Provider.of<Auth>(context).adventurer;
     return FutureBuilder(
-      future: Provider.of<Auth>(context, listen: false).loadAdventurer(),
+      future: Provider.of<Auth>(context, listen: false).loadAdventurer(context),
       builder: (context, AsyncSnapshot<void> snap) {
         if (snap.connectionState == ConnectionState.done) {
-          final adventurer = Provider.of<Auth>(context).adventurer;
+          final adventurer =
+              Provider.of<Auth>(context, listen: false).adventurer;
 
           return SingleChildScrollView(
             child: Column(

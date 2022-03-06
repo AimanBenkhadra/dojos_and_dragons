@@ -417,4 +417,36 @@ class Skills with ChangeNotifier {
         return 0;
     }
   }
+
+  Skill? fromString(String name) {
+    print('Finding skill from the String name $name');
+    switch (name) {
+      case 'Push Up':
+        print(_skills
+            .firstWhere((element) => element.name == SkillName.pushUp)
+            .nameString);
+        return _skills
+            .firstWhere((element) => element.name == SkillName.pushUp);
+      case 'Pull Up':
+        print(
+            _skills.firstWhere((element) => element.name == SkillName.pullUp));
+        return _skills
+            .firstWhere((element) => element.name == SkillName.pullUp);
+      case 'Bodyweight Squat':
+        print(_skills.firstWhere(
+            (element) => element.name == SkillName.bodyweightSquat));
+        return _skills
+            .firstWhere((element) => element.name == SkillName.bodyweightSquat);
+      case 'Squat':
+        print(_skills.firstWhere((element) => element.name == SkillName.squat));
+        return _skills.firstWhere((element) => element.name == SkillName.squat);
+      case 'Lying Leg Raise':
+        print(_skills
+            .firstWhere((element) => element.name == SkillName.lyingLegRaise));
+        return _skills
+            .firstWhere((element) => element.name == SkillName.lyingLegRaise);
+      default:
+        return null;
+    }
+  }
 }
