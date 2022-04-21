@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // ignore: use_key_in_widget_constructors
 class LoginScreen extends StatefulWidget {
@@ -199,6 +200,45 @@ class _LoginScreenState extends State<LoginScreen> {
               /// Some space after title
               const SizedBox(
                 height: 16.0,
+              ),
+
+              /// Google+ button
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 32),
+                // clipBehavior: Clip.antiAlias,
+                // decoration: BoxDecoration(shape: BoxShape.circle),
+                // borderRadius: BorderRadius.circular(32),
+                child: ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: Icon(FontAwesomeIcons.googlePlus),
+                  label: Text('Google+'),
+                ),
+              ),
+
+              /// Some space after button
+              const SizedBox(
+                height: 16.0,
+              ),
+              Row(
+                children: [
+                  const Expanded(
+                    child: Divider(
+                      indent: 16,
+                      endIndent: 16,
+                    ),
+                  ),
+                  Container(
+                    decoration: const BoxDecoration(color: Colors.white),
+                    child: const Text('OR'),
+                  ),
+                  const Expanded(
+                    child: Divider(
+                      indent: 16,
+                      endIndent: 16,
+                    ),
+                  ),
+                ],
               ),
 
               /// Email field
