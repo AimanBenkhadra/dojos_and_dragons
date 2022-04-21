@@ -45,8 +45,7 @@ class _ProfileState extends State<Profile> {
       future: Provider.of<Auth>(context, listen: false).loadAdventurer(context),
       builder: (context, AsyncSnapshot<void> snap) {
         if (snap.connectionState == ConnectionState.done) {
-          final adventurer =
-              Provider.of<Auth>(context, listen: false).adventurer;
+          final adventurer = Provider.of<Adventurer>(context);
 
           return SingleChildScrollView(
             child: Column(
@@ -83,14 +82,16 @@ class _ProfileState extends State<Profile> {
                       'flex',
                     ],
                     data: [
-                      [
-                        adventurer.abilities[Ability.push]!.toInt(),
-                        adventurer.abilities[Ability.pull]!.toInt(),
-                        adventurer.abilities[Ability.core]!.toInt(),
-                        adventurer.abilities[Ability.legs]!.toInt(),
-                        adventurer.abilities[Ability.stam]!.toInt(),
-                        adventurer.abilities[Ability.flex]!.toInt(),
-                      ]
+                      adventurer.abilities.isEmpty
+                          ? [0, 0, 0, 0, 0, 0]
+                          : [
+                              adventurer.abilities[Ability.push]!.toInt(),
+                              adventurer.abilities[Ability.pull]!.toInt(),
+                              adventurer.abilities[Ability.core]!.toInt(),
+                              adventurer.abilities[Ability.legs]!.toInt(),
+                              adventurer.abilities[Ability.stam]!.toInt(),
+                              adventurer.abilities[Ability.flex]!.toInt(),
+                            ]
                     ],
                   ),
                 ),

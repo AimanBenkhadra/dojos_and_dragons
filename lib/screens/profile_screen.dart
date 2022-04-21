@@ -18,13 +18,10 @@ class ProfileScreen extends StatelessWidget {
         title: const Text('Doragons'),
       ),
       drawer: DrawerAdventurer(),
-      body:
-          // ChangeNotifierProvider<Adventurer>.value(
-          //   value: Provider.of<Adventurers>(context).adventurers.firstWhere(
-          //       (a) => a.id == Provider.of<Auth>(context, listen: false).userId),
-          //   child:
-          Profile(),
-      // ),
+      body: ChangeNotifierProvider<Adventurer>.value(
+        value: Adventurer(),
+        child: Profile(),
+      ),
     );
   }
 }

@@ -46,6 +46,7 @@ class Adventurer with ChangeNotifier {
   String get fName => firstName;
 
   int get personaLevel {
+    if (abilities.isEmpty) return 0;
     int levels = abilities.values.reduce((a, b) => a + b);
     return levels ~/ abilities.length;
   }
