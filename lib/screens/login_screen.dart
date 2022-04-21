@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 // ignore: use_key_in_widget_constructors
 class LoginScreen extends StatefulWidget {
@@ -170,6 +171,25 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isAuthLoading = false);
   }
 
+  /// Signin with Google+
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -210,7 +230,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // decoration: BoxDecoration(shape: BoxShape.circle),
                 // borderRadius: BorderRadius.circular(32),
                 child: ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: signInWithGoogle,
                   icon: Icon(FontAwesomeIcons.googlePlus),
                   label: Text('Google+'),
                 ),

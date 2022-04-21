@@ -51,6 +51,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "387307339005-9s8ms13do82i03oumo7rjnmolmmde3ek.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.spiderarrow.dojos_and_dragons",
+            "certificate_hash": "e1be617d23930bbb148ee5abe7b208093f6901da"
+          }
+        },
+        {
           "client_id": "387307339005-ri8hd43gbpl5ai450a4ep4vvfph55kj7.apps.googleusercontent.com",
           "client_type": 3
         }
