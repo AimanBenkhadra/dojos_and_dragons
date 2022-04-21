@@ -55,12 +55,14 @@ class _LoginScreenState extends State<LoginScreen> {
     final _isFormValid = _formKey.currentState!.validate();
     if (!_isFormValid) return;
     setState(() => _isAuthLoading = true);
+
     if (_signingUp) {
       try {
         await auth.createUserWithEmailAndPassword(
           email: _emailController.text,
           password: _pwController.text,
         );
+
         if (auth.currentUser != null && !auth.currentUser!.emailVerified) {
           setState(() {
             _isAuthLoading = true;
@@ -256,7 +258,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 // decoration: BoxDecoration(shape: BoxShape.circle),
                 // borderRadius: BorderRadius.circular(32),
                 child: ElevatedButton.icon(
-                  onPressed: signInWithGoogle,
+                  onPressed: () {
+                    signInWithGoogle();
+                  },
                   icon: Icon(FontAwesomeIcons.googlePlus),
                   label: Text('Google+'),
                 ),

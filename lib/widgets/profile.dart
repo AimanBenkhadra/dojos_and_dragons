@@ -19,6 +19,8 @@ class _ProfileState extends State<Profile> {
   bool _loading = true;
   @override
   Widget build(BuildContext context) {
+    final auth = FirebaseAuth.instance;
+    print(auth.currentUser!.providerData);
     // final adventurer = Provider.of<Adventurer>(context);
     // final loggedAdventurer = fAuth.currentUser;
     // final adventurers = firestore.collection('adventurers');
